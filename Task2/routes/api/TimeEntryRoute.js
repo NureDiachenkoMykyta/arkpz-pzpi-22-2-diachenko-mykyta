@@ -35,7 +35,7 @@ router.post(
         }
   
         // Перевіряємо, чи користувач є виконавцем завдання
-        if (task.assignee_id !== req.user.id) {
+        if (task.assignee_id !== req.user.id ) {
           return res.status(403).json({ error: 'You are not the assignee for this task.' });
         }
   

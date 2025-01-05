@@ -108,7 +108,7 @@ router.post(
         const token = jwt.sign(
           { id: user.id, email: user.email },
           JWT_SECRET,
-          { expiresIn: '10h' } // Термін дії токена 1 година
+          { expiresIn: '10h' } 
         );
 
         // Повернення токена

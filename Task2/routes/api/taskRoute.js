@@ -1,20 +1,27 @@
 const express = require('express');
 const { body, param, validationResult } = require('express-validator');
 const authMiddleware = require('../../middlewares/authMiddleware');
-const Friendship = require('../../models/friendship');
-const User = require('../../models/user');
-const { Op } = require('sequelize');
-const { isUUID } = require('validator'); 
-
-
+const Task = require('../../models/task');
 const router = express.Router();
+const { Op } = require('sequelize');
 
-/** Запит на дружбу */
+// Создание задачи
 router.post(
-  '/request',
+  '/create',
   [
     authMiddleware,
-    body('email').isEmail().withMessage('A valid email is required'),
+    body('title').notEmpty().withMessage('Title is required').isLength({ min: 3 }).withMessage('Title must be at least 3 characters long'),
+    body('description').optional().isLength({ max: 500 }).withMessage('Description must be less than 500 characters'),
+    body('priority')
+      .notEmpty().withMessage('Priority is required')
+      .isIn(['Low', 'Medium', 'High'])
+      .withMessage('Priority must be one of the following: Low, Medium, High'),
+    body('status')
+      .notEmpty().withMessage('Status is required')
+      .isIn(['Pending', 'In Progress', 'Completed'])
+      .withMessage('Status must be one of the following: Pending, In Progress, Completed'),
+    body('due_date').notEmpty().withMessage('Due date is required').isISO8601().withMessage('Due date must be a valid ISO8601 date'),
+    body('assignee_id').optional().isUUID().withMessage('Assignee ID must be a valid UUID'),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -22,135 +29,54 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { email } = req.body;
-    const user_id = req.user.id;
+    const { title, description, priority, status, due_date, assignee_id } = req.body;
 
     try {
-      // Перевіряємо, чи існує користувач
-      const friend = await User.findOne({ where: { email } });
-      if (!friend) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-      if (friend.id === user_id) {
-        return res.status(400).json({ error: 'You cannot send a friend request to yourself' });
-      }
-
-      // Перевіряємо, чи вже існує запит або дружба
-      const existingFriendship = await Friendship.findOne({
-        where: {
-          [Op.or]: [
-            { sender_id: user_id, receiver_id: friend.id },
-            { sender_id: friend.id, receiver_id: user_id },
-          ],
-        },
+      const task = await Task.create({
+        title,
+        description,
+        priority,
+        status,
+        due_date,
+        user_id: req.user.id,
+        assignee_id: assignee_id || req.user.id, // Если assignee_id не указан, он будет равен user_id
       });
 
-      if (existingFriendship) {
-        return res.status(400).json({ error: 'Friend request already exists or you are already friends' });
-      }
-
-      // Створюємо новий запит
-      await Friendship.create({
-        sender_id: user_id,
-        receiver_id: friend.id,
-        status: 'pending',
-      });
-
-      res.status(201).json({ message: 'Friend request sent successfully' });
+      res.status(201).json({ message: 'Task created successfully', task });
     } catch (error) {
-      console.error(error);
+      console.error('Error creating task:', error);
       res.status(500).json({ error: 'Server error' });
     }
   }
 );
 
-/** Прийняти/відхилити запит на дружбу */
-router.post(
-  '/respond',
-  [
-    authMiddleware,
-    body('request_id').isUUID().withMessage('A valid request ID is required'),
-    body('action').isIn(['accept', 'reject']).withMessage('Action must be "accept" or "reject"'),
-  ],
-  async (req, res) => {
-    const errors = await validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { request_id, action } = req.body;
-    const user_id = req.user.id;
-
-    console.log('Request ID:', request_id);
-    console.log('User ID:', user_id);
-
-    try {
-      const friendship = await Friendship.findOne({
-        where: { id: request_id, receiver_id: user_id, status: 'pending' },
-      });
-
-      if (!friendship) {
-        return res.status(404).json({ error: 'Friend request not found' });
-      }
-
-      if (action === 'accept') {
-        await friendship.update({ status: 'accepted' });
-        return res.status(200).json({ message: 'Friend request accepted' });
-      }
-
-      // Видалення запиту, якщо він відхилений
-      await friendship.destroy();
-      res.status(200).json({ message: 'Friend request rejected' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Server error' });
-    }
-  }
-);
-
-
-
-/** Отримати список друзів */
+// Получение всех задач пользователя
 router.get(
-  '/',
-  authMiddleware,
+  '/my-tasks',
+  [authMiddleware], // Только авторизация
   async (req, res) => {
-    const user_id = req.user.id;
-
     try {
-      const friends = await Friendship.findAll({
+      const tasks = await Task.findAll({
         where: {
-          [Op.or]: [
-            { sender_id: user_id, status: 'accepted' },
-            { receiver_id: user_id, status: 'accepted' },
-          ],
+          [Op.or]: [{ user_id: req.user.id }, { assignee_id: req.user.id }],
         },
-        include: [
-          {
-            model: User,
-            as: 'Friend',
-            attributes: ['id', 'name', 'email'],
-          },
-        ],
+        order: [['due_date', 'ASC']], // Сортировка по дате выполнения
       });
 
-      res.status(200).json({
-        message: 'Friends retrieved successfully',
-        friends,
-      });
+      res.status(200).json({ tasks });
     } catch (error) {
-      console.error(error);
+      console.error('Error retrieving tasks:', error);
       res.status(500).json({ error: 'Server error' });
     }
   }
 );
 
-/** Видалення друга */
-router.delete(
-  '/remove',
+// Получение задачи по ID
+router.get(
+  '/:id',
   [
     authMiddleware,
-    body('friend_id').isUUID().withMessage('Friend ID must be a valid UUID'),
+    param('id').isUUID().withMessage('Task ID must be a valid UUID'),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -158,27 +84,109 @@ router.delete(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { friend_id } = req.body;
-    const user_id = req.user.id;
+    const { id } = req.params;
 
     try {
-      const friendship = await Friendship.findOne({
-        where: {
-          [Op.or]: [
-            { sender_id: user_id, receiver_id: friend_id, status: 'accepted' },
-            { sender_id: friend_id, receiver_id: user_id, status: 'accepted' },
-          ],
-        },
-      });
+      const task = await Task.findByPk(id);
 
-      if (!friendship) {
-        return res.status(404).json({ error: 'Friendship not found' });
+      if (!task) {
+        return res.status(404).json({ error: 'Task not found' });
       }
 
-      await friendship.destroy();
-      res.status(200).json({ message: 'Friend removed successfully' });
+      if (task.user_id !== req.user.id && task.assignee_id !== req.user.id) {
+        return res.status(403).json({ error: 'Access denied. You are not authorized to view this task.' });
+      }
+
+      res.status(200).json({ task });
     } catch (error) {
-      console.error(error);
+      console.error('Error retrieving task:', error);
+      res.status(500).json({ error: 'Server error' });
+    }
+  }
+);
+
+
+
+
+// Обновление задачи
+router.put(
+  '/edit/:id',
+  [
+    authMiddleware,
+    param('id').isUUID().withMessage('Task ID must be a valid UUID'),
+    body('title').optional().isLength({ min: 3 }).withMessage('Title must be at least 3 characters long'),
+    body('description').optional().isLength({ max: 500 }).withMessage('Description must be less than 500 characters'),
+    body('priority')
+      .optional()
+      .isIn(['Low', 'Medium', 'High'])
+      .withMessage('Priority must be one of the following: Low, Medium, High'),
+    body('status')
+      .optional()
+      .isIn(['Pending', 'In Progress', 'Completed'])
+      .withMessage('Status must be one of the following: Pending, In Progress, Completed'),
+    body('due_date').optional().isISO8601().withMessage('Due date must be a valid ISO8601 date'),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { id } = req.params;
+    const updates = req.body;
+
+    try {
+      const task = await Task.findByPk(id);
+
+      if (!task) {
+        return res.status(404).json({ error: 'Task not found' });
+      }
+
+      if (task.user_id !== req.user.id) {
+        return res.status(403).json({ error: 'Access denied. You can only update your own tasks.' });
+      }
+
+      await task.update(updates);
+
+      res.status(200).json({ message: 'Task updated successfully', task });
+    } catch (error) {
+      console.error('Error updating task:', error);
+      res.status(500).json({ error: 'Server error' });
+    }
+  }
+);
+
+// Удаление задачи
+router.delete(
+  '/delete/:id',
+  [
+    authMiddleware,
+    param('id').isUUID().withMessage('Task ID must be a valid UUID'),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { id } = req.params;
+
+    try {
+      const task = await Task.findByPk(id);
+
+      if (!task) {
+        return res.status(404).json({ error: 'Task not found' });
+      }
+
+      if (task.user_id !== req.user.id) {
+        return res.status(403).json({ error: 'Access denied. You can only delete your own tasks.' });
+      }
+
+      await task.destroy();
+
+      res.status(200).json({ message: 'Task deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting task:', error);
       res.status(500).json({ error: 'Server error' });
     }
   }
