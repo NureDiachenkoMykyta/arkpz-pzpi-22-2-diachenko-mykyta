@@ -16,9 +16,9 @@ const authMiddleware = async (req, res, next) => {
 
   try {
     // Розшифровуємо токен
+    //console.log(token)
     const decoded = jwt.verify(token, JWT_SECRET);
-
-
+    
     // Отримуємо інформацію про користувача з бази даних
     const user = await User.findByPk(decoded.id, {
       attributes: ['id', 'name', 'email', 'role'], // Витягуємо лише необхідні поля
