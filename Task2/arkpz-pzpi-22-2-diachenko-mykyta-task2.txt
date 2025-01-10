@@ -5,86 +5,1449 @@
 з дисципліни "Аналіз та рефакторинг коду"
 до лабораторної роботи №1
 на тему: "Розробка Vision & Scope"
-
-
-
-
-
-Виконав ст. гр. ПЗПІ-22-2 
-Д’яченнко Микита Олександрович
-
-Ст. викл. кафедри ПІ 
+Виконав ст. гр. ПЗПІ-22-2
+Д’яченко Микита Олександрович
+Ст. викл. кафедри ПІ
 Сокорчук Ігор Петрович
-
-
-
-
-
-
-
-
-
-Харків 2024 
-1.	МЕТА
-Метою роботи є розроблення ефективної бази даних для серверної частини програмної системи, а також створення прикладного програмного інтерфейсу (API) для аналізу та моніторингу витрат часу. Це забезпечить централізоване зберігання даних, зручний доступ до інформації та можливість інтеграції з іншими системами, що сприятиме покращенню управління часом та підвищенню продуктивності.
-
-2.	ХІД РОБОТИ
-Виконання лабораторної роботи розпочалося з побудови ER-діаграми, що відображає основну структуру даних системи. ER-діаграма розміщена у додатку А. Після цього було створено схему бази даних для збереження інформації користувачів, завдань і звітів.
-Для збереження структурованих даних було обрано реляційну базу даних PostgreSQL. Основними причинами вибору є:
-	Надійність: PostgreSQL є однією з найбільш стабільних і безпечних СУБД із відкритим вихідним кодом.
-	Гнучкість: Підтримує складні транзакції, що важливо для системи, яка працює з конфіденційними даними.
-	Широкий функціонал: Інструменти для розширеної аналітики та підтримка JSON, що забезпечує додаткову гнучкість у роботі з даними.
-Схема бази даних наведена у додатку Б. Далі було створено функції для підключення до PostgreSQL із застосунку, написаного на Node.js.
-
+Харків 2024
+1. МЕТА
+Метою роботи є розроблення ефективної бази даних для серверної частини
+програмної системи, а також створення прикладного програмного інтерфейсу
+(API) для аналізу та моніторингу витрат часу. Це забезпечить централізоване
+зберігання даних, зручний доступ до інформації та можливість інтеграції з
+іншими системами, що сприятиме покращенню управління часом та
+підвищенню продуктивності.
+2. ХІД РОБОТИ
+Виконання лабораторної роботи розпочалося з побудови ER-діаграми, що
+відображає основну структуру даних системи. ER-діаграма розміщена у
+додатку А. Після цього було створено схему бази даних для збереження
+інформації користувачів, завдань і звітів.
+Для збереження структурованих даних було обрано реляційну базу даних
+PostgreSQL. Основними причинами вибору є:
+− Надійність: PostgreSQL є однією з найбільш стабільних і безпечних
+СУБД із відкритим вихідним кодом.
+− Гнучкість: Підтримує складні транзакції, що важливо для системи, яка
+працює з конфіденційними даними.
+− Широкий функціонал: Інструменти для розширеної аналітики та
+підтримка JSON, що забезпечує додаткову гнучкість у роботі з даними.
+Схема бази даних наведена у додатку Б. Далі було створено функції для
+підключення до PostgreSQL із застосунку, написаного на Node.js.
 UML-діаграми
-Після створення базових функціональних компонентів було розроблено UML-діаграми прецедентів для серверної частини. Для зручності і уникнення надмірної складності діаграми було поділено на дві частини:
-	Дії з базою даних, що включають збереження, оновлення та видалення записів.
-	Дії системи з обробки інформації від IoT-пристроїв, таких як смарт-годинники та фітнес-браслети.
+Після створення базових функціональних компонентів було розроблено UMLдіаграми прецедентів для серверної частини. Для зручності і уникнення
+надмірної складності діаграми було поділено на дві частини:
+− Дії з базою даних, що включають збереження, оновлення та видалення
+записів.
+− Дії системи з обробки інформації від IoT-пристроїв, таких як смартгодинники та фітнес-браслети.
 Обидві діаграми наведені у додатку В.
-
 Розробка API
-На основі специфікації було розроблено REST API для забезпечення інтеграції серверної частини з клієнтськими додатками. API включає наступні функції:
-	CRUD-операції для управління даними користувачів і завдань.
-	Прийом даних з IoT-пристроїв для автоматичного обліку активності.
-
+На основі специфікації було розроблено REST API для забезпечення інтеграції
+серверної частини з клієнтськими додатками. API включає наступні функції:
+− CRUD-операції для управління даними користувачів і завдань.
+− Отримання даних з IoT-пристроїв для автоматичного обліку активності.
 Архітектура системи
-Система має багаторівневу архітектуру, яка складається з наступних компонентів:
-	Клієнтська частина: мобільний та веб-додатки, що надсилають запити до серверної складової.
-	Серверна частина: обробляє запити клієнтів та взаємодіє з базою даних через REST API.
-	СУБД PostgreSQL: забезпечує збереження та обробку структурованих даних.
-Взаємодія між компонентами реалізована через RESTful API, що дозволяє легко інтегрувати систему з іншими додатками або пристроями IoT.
-
+Система має багаторівневу архітектуру, яка складається з наступних
+компонентів:
+− Клієнтська частина: мобільний та веб-додатки, що надсилають запити до
+серверної складової.
+− Серверна частина: обробляє запити клієнтів та взаємодіє з базою даних
+через REST API.
+− СУБД PostgreSQL: забезпечує збереження та обробку структурованих
+даних.
+Взаємодія між компонентами реалізована через RESTful API, що дозволяє
+легко інтегрувати систему з іншими додатками або пристроями IoT.
 Використані технології:
-	Node.js: використовується для серверної частини, забезпечуючи швидкодію і масштабованість.
-	Express.js: дозволяє швидко налаштовувати маршрути для HTTP-запитів.
-	PostgreSQL: основна СУБД для збереження даних.
-	Docker: забезпечує ізоляцію і простоту розгортання системи.
-
+− Node.js: використовується для серверної частини, забезпечуючи
+швидкодію і масштабованість.
+− Express.js: дозволяє швидко налаштовувати маршрути для HTTPзапитів.
+− PostgreSQL: основна СУБД для збереження даних.
+− Docker: забезпечує ізоляцію і простоту розгортання системи.
 Тестування
-Розроблене API було протестоване за допомогою Postman. Усі основні функції працюють стабільно, що підтверджує правильність реалізації серверної частини.
-
-Повний код проекту наведено у GitHub, посилання на який можна знайти у додатку Г. Відеодемонстрація роботи системи доступна у додатку Д.
- 
-Додаток А
+Розроблене API було протестоване за допомогою Postman. Усі основні функції
+працюють стабільно, що підтверджує правильність реалізації серверної
+частини.
+Повний код проекту наведено у GitHub, посилання на який можна знайти у
+додатку Г. Відео демонстрація роботи системи доступна у додатку Д.
+ДОДАТОК А
 ER-діаграма
- 
-Рис. 1 – er-діаграма бази даних
- 
-Додаток Б
+Рисунок 1 - ER-діаграма
+ДОДАТОК Б
 Схема бази даних
- 
-Рис. 2 – схема бази даних
- 
-Додаток В
+Рисунок 2 - Схема SQL бази даних Postgresql
+ДОДАТОК В
 UML-діаграми
- 
-Рис. 3 – UML-діаграма користувача 
-Рис. 4 - UML-діаграма серверу
- 
-Додаток Г
-Посилання на GitHub репозиторій: 
-https://github.com/NureDiachenkoMykyta/arkpz-pzpi-22-2-diachenko-mykyta/tree/main/Task2
- 
-Додаток Д
+Рисунок 3 - UML-діаграма прецедентів, дії з користувачами
+Рисунок 4 - UML-діаграма прецедентів, дії з сервером
+ДОДАТОК Г
+Специфікація API
+{
+"info": {
+"_postman_id": "eb2e0d2c-acdb-4a54-9243-daa8012f7961",
+"name": "API Documentation #reference",
+"schema":
+"https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+"_exporter_id": "30655132"
+},
+"item": [
+{
+"name": "User",
+"item": [
+{
+"name": "api/auth/register",
+"request": {
+"method": "POST",
+"header": [],
+"body": {
+"mode": "raw",
+"raw": "{\r\n \"name\": \"John\",\r\n \"email\":
+\"qweqweqe@example.com\",\r\n \"password\":
+\"password123\",\r\n \"passwordConfirmation\": \"password123\"\r\n}\r\n",
+"options": {
+"raw": {
+"language": "json"
+}
+}
+},
+"url": {
+"raw": "http://localhost:3000/api/auth/register",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"auth",
+"register"
+]
+}
+},
+"response": []
+},
+{
+"name": "api/auth/login",
+"request": {
+"method": "POST",
+"header": [],
+"body": {
+"mode": "raw",
+"raw": "{\r\n \"email\": \"admin@gmail.com\",\r\n \"password\":
+\"admin1\"\r\n}\r\n",
+"options": {
+"raw": {
+"language": "json"
+}
+}
+},
+"url": {
+"raw": "http://localhost:3000/api/auth/login",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"auth",
+"login"
+]
+}
+},
+"response": []
+},
+{
+"name": "api/auth/me",
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw": "http://localhost:3000/api/auth/me",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"auth",
+"me"
+]
+}
+},
+"response": []
+}
+],
+"description": "The `/me` endpoints let you manage information about the
+authenticated user."
+},
+{
+"name": "Tasks",
+"item": [
+{
+"name": "createTask",
+"request": {
+"method": "POST",
+"header": [],
+"body": {
+"mode": "raw",
+"raw": "{\r\n \"title\": \"Task title\",\r\n \"description\":
+\"Description description description description description description description
+description description description description description\",\r\n \"priority\":
+\"Low\",\r\n \"status\": \"Completed\",\r\n \"due_date\": \"2024-12-
+31\",\r\n \"assignee_id\": null\r\n \r\n}",
+"options": {
+"raw": {
+"language": "json"
+}
+}
+},
+"url": {
+"raw": "http://localhost:3000/api/tasks/create",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"tasks",
+"create"
+]
+}
+},
+"response": []
+},
+{
+"name": "EditTask",
+"request": {
+"method": "PUT",
+"header": [],
+"body": {
+"mode": "raw",
+"raw": "{\r\n \"title\": \"Updated Task Title\",\r\n \"priority\":
+\"Medium\",\r\n \"status\": \"Completed\"\r\n}\r\n",
+"options": {
+"raw": {
+"language": "json"
+}
+}
+},
+"url": {
+"raw": "http://localhost:3000/api/tasks/edit/69f0d00b-29c6-4872-
+bff5-97c3abf2ed42",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"tasks",
+"edit",
+"69f0d00b-29c6-4872-bff5-97c3abf2ed42"
+]
+}
+},
+"response": []
+},
+{
+"name": "DeleteTask",
+"request": {
+"method": "DELETE",
+"header": [],
+"body": {
+"mode": "raw",
+"raw": "",
+"options": {
+"raw": {
+"language": "json"
+}
+}
+},
+"url": {
+"raw": "http://localhost:3000/api/tasks/delete/69f0d00b-29c6-4872-
+bff5-97c3abf2ed42",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"tasks",
+"delete",
+"69f0d00b-29c6-4872-bff5-97c3abf2ed42"
+]
+}
+},
+"response": []
+},
+{
+"name": "GetAllTasks",
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw": "http://localhost:3000/api/tasks/my-tasks",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"tasks",
+"my-tasks"
+]
+}
+},
+"response": []
+},
+{
+"name": "GetTaskById",
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw": "http://localhost:3000/api/tasks/5c59e762-b50b-4fa2-9527-
+ea1235d10434",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"tasks",
+"5c59e762-b50b-4fa2-9527-ea1235d10434"
+]
+}
+},
+"response": []
+},
+{
+"name": "TotalTime",
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw": "http://localhost:3000/api/tasks/f24c1c25-c23f-4319-8a4dc10cb29ce82b/total-time",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"tasks",
+"f24c1c25-c23f-4319-8a4d-c10cb29ce82b",
+"total-time"
+]
+}
+},
+"response": []
+},
+{
+"name": "StartTimer",
+"request": {
+"method": "POST",
+"header": [],
+"body": {
+"mode": "raw",
+"raw": "{ \"task_id\": \"cbfcca06-628b-4993-813d-5d5753672a5a\"
+}",
+"options": {
+"raw": {
+"language": "json"
+}
+}
+},
+"url": {
+"raw": "http://localhost:3000/api/tasks/start",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"tasks",
+"start"
+]
+}
+},
+"response": []
+},
+{
+"name": "StopTimer",
+"request": {
+"method": "POST",
+"header": [],
+"body": {
+"mode": "raw",
+"raw": "{ \"task_id\": \"cbfcca06-628b-4993-813d-5d5753672a5a\"
+}",
+"options": {
+"raw": {
+"language": "json"
+}
+}
+},
+"url": {
+"raw": "http://localhost:3000/api/tasks/stop",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"tasks",
+"stop"
+]
+}
+},
+"response": []
+}
+],
+"event": [
+{
+"listen": "prerequest",
+"script": {
+"type": "text/javascript",
+"packages": {},
+"exec": [
+""
+]
+}
+},
+{
+"listen": "test",
+"script": {
+"type": "text/javascript",
+"packages": {},
+"exec": [
+""
+]
+}
+}
+]
+},
+{
+"name": "TimeEntries",
+"item": [
+{
+"name": "TimeEntryCreate",
+"request": {
+"method": "POST",
+"header": [],
+"body": {
+"mode": "raw",
+"raw": "{\r\n \"task_id\": \"9c60f75e-d15a-4179-9441-
+b1e1d5a109e4\",\r\n \"start_time\": \"2024-12-20\",\r\n \"end_time\": \"2024-12-
+21T21:00:00\"\r\n}",
+"options": {
+"raw": {
+"language": "json"
+}
+}
+},
+"url": {
+"raw": "http://localhost:3000/api/time-entries/create",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"time-entries",
+"create"
+]
+}
+},
+"response": []
+},
+{
+"name": "GetTimeEntryById",
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw": "http://localhost:3000/api/time-entries/0047fc5d-a0b4-40e0-
+ab31-925f906e3e1a",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"time-entries",
+"0047fc5d-a0b4-40e0-ab31-925f906e3e1a"
+]
+}
+},
+"response": []
+},
+{
+"name": "GetAllTimeEntriesByTaskId",
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw": "http://localhost:3000/api/time-entries/task/4a6b10bc-be0c4694-b681-65011d4899ba",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"time-entries",
+"task",
+"4a6b10bc-be0c-4694-b681-65011d4899ba"
+]
+}
+},
+"response": []
+},
+{
+"name": "editTimeEntry",
+"request": {
+"method": "PUT",
+"header": [],
+"body": {
+"mode": "raw",
+"raw": "{\r\n \"end_time\": \"2024-12-29T10:00:00Z\"\r\n\r\n}",
+"options": {
+"raw": {
+"language": "json"
+}
+}
+},
+"url": {
+"raw": "http://localhost:3000/api/time-entries/edit/0047fc5d-a0b4-
+40e0-ab31-925f906e3e1a",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"time-entries",
+"edit",
+"0047fc5d-a0b4-40e0-ab31-925f906e3e1a"
+]
+}
+},
+"response": []
+},
+{
+"name": "DeleteTimeEntry",
+"request": {
+"method": "DELETE",
+"header": [],
+"url": {
+"raw": "http://localhost:3000/api/time-entries/delete/0047fc5da0b4-40e0-ab31-925f906e3e1a",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"time-entries",
+"delete",
+"0047fc5d-a0b4-40e0-ab31-925f906e3e1a"
+]
+}
+},
+"response": []
+}
+],
+"event": [
+{
+"listen": "prerequest",
+"script": {
+"type": "text/javascript",
+"packages": {},
+"exec": [
+""
+]
+}
+},
+{
+"listen": "test",
+"script": {
+"type": "text/javascript",
+"packages": {},
+"exec": [
+""
+]
+}
+}
+]
+},
+{
+"name": "Reports",
+"item": [
+{
+"name": "time_summaryReport",
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw":
+"http://localhost:3000/api/reports/generate?reportType=time_summary&start_date
+=2024-11-01&end_date=2025-12-31",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"reports",
+"generate"
+],
+"query": [
+{
+"key": "reportType",
+"value": "time_summary"
+},
+{
+"key": "start_date",
+"value": "2024-11-01"
+},
+{
+"key": "end_date",
+"value": "2025-12-31"
+}
+]
+}
+},
+"response": []
+},
+{
+"name": "task_statusReport",
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw":
+"http://localhost:3000/api/reports/generate?reportType=task_status",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"reports",
+"generate"
+],
+"query": [
+{
+"key": "reportType",
+"value": "task_status"
+}
+]
+}
+},
+"response": []
+},
+{
+"name": "completed_tasksReport",
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw":
+"http://localhost:3000/api/reports/generate?reportType=completed_tasks",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"reports",
+"generate"
+],
+"query": [
+{
+"key": "reportType",
+"value": "completed_tasks"
+}
+]
+}
+},
+"response": []
+},
+{
+"name": "task-progress",
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw": "http://localhost:3000/api/reports/generate/task-progress",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"reports",
+"generate",
+"task-progress"
+]
+}
+},
+"response": []
+},
+{
+"name": "time-entries-calendar",
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw": "http://localhost:3000/api/reports/generate/time-entriescalendar",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"reports",
+"generate",
+"time-entries-calendar"
+]
+}
+},
+"response": []
+},
+{
+"name": "achievements",
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw": "http://localhost:3000/api/reports/generate/achievements",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"reports",
+"generate",
+"achievements"
+]
+}
+},
+"response": []
+},
+{
+"name": "activity-feed",
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw": "http://localhost:3000/api/reports/generate/activity-feed",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"reports",
+"generate",
+"activity-feed"
+]
+}
+},
+"response": []
+},
+{
+"name": "performance-metrics",
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw": "http://localhost:3000/api/reports/generate/performancemetrics",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"reports",
+"generate",
+"performance-metrics"
+]
+}
+},
+"response": []
+},
+{
+"name": "upcoming-deadlines",
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw": "http://localhost:3000/api/reports/generate/upcomingdeadlines",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"reports",
+"generate",
+"upcoming-deadlines"
+]
+}
+},
+"response": []
+},
+{
+"name": "task-distribution",
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw": "http://localhost:3000/api/reports/generate/task-distribution",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"reports",
+"generate",
+"task-distribution"
+]
+}
+},
+"response": []
+}
+]
+},
+{
+"name": "Friendship",
+"item": [
+{
+"name": "sendFriendshipRequest",
+"request": {
+"method": "POST",
+"header": [],
+"body": {
+"mode": "raw",
+"raw": "{\r\n \"email\": \"qweqweqe@example.com\"\r\n}",
+"options": {
+"raw": {
+"language": "json"
+}
+}
+},
+"url": {
+"raw": "http://localhost:3000/api/friends/request",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"friends",
+"request"
+]
+}
+},
+"response": []
+},
+{
+"name": "GetFriedshipRequests",
+"protocolProfileBehavior": {
+"disableBodyPruning": true
+},
+"request": {
+"auth": {
+"type": "bearer",
+"bearer": [
+{
+"key": "token",
+"value":
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU0ZGUzMmZjLTAyYT
+ItNDZlNC1hODI4LTViZGMwZmQzMDJhMyIsImVtYWlsIjoicXdlcXdlcWVAZ
+XhhbXBsZS5jb20iLCJpYXQiOjE3MzYxNTkxMTgsImV4cCI6MTczNjE2MjcxO
+H0.h1uZWBhUVg8rPfvtTBBYIDgZfECFm3K41YaLbHHb8oY",
+"type": "string"
+}
+]
+},
+"method": "GET",
+"header": [],
+"body": {
+"mode": "raw",
+"raw": "",
+"options": {
+"raw": {
+"language": "json"
+}
+}
+},
+"url": {
+"raw": "http://localhost:3000/api/friends/requests",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"friends",
+"requests"
+]
+}
+},
+"response": []
+},
+{
+"name": "sendFriendshipRespond",
+"request": {
+"auth": {
+"type": "bearer",
+"bearer": [
+{
+"key": "token",
+"value":
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU0ZGUzMmZjLTAyYT
+ItNDZlNC1hODI4LTViZGMwZmQzMDJhMyIsImVtYWlsIjoicXdlcXdlcWVAZ
+XhhbXBsZS5jb20iLCJpYXQiOjE3MzYxNTkxMTgsImV4cCI6MTczNjE2MjcxO
+H0.h1uZWBhUVg8rPfvtTBBYIDgZfECFm3K41YaLbHHb8oY",
+"type": "string"
+}
+]
+},
+"method": "POST",
+"header": [],
+"body": {
+"mode": "raw",
+"raw": "{\r\n \"request_id\": \"414cf5a9-509b-41e5-aa82-
+7a56aa013047\",\r\n \"action\": \"accept\" \r\n}",
+"options": {
+"raw": {
+"language": "json"
+}
+}
+},
+"url": {
+"raw": "http://localhost:3000/api/friends/respond",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"friends",
+"respond"
+]
+}
+},
+"response": []
+},
+{
+"name": "getMyFriends",
+"request": {
+"auth": {
+"type": "bearer",
+"bearer": [
+{
+"key": "token",
+"value":
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU0ZGUzMmZjLTAyYT
+ItNDZlNC1hODI4LTViZGMwZmQzMDJhMyIsImVtYWlsIjoicXdlcXdlcWVAZ
+XhhbXBsZS5jb20iLCJpYXQiOjE3MzYxNTkxMTgsImV4cCI6MTczNjE2MjcxO
+H0.h1uZWBhUVg8rPfvtTBBYIDgZfECFm3K41YaLbHHb8oY",
+"type": "string"
+}
+]
+},
+"method": "GET",
+"header": [],
+"url": {
+"raw": "http://localhost:3000/api/friends",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"friends"
+]
+}
+},
+"response": []
+},
+{
+"name": "getSendedRequest",
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw": "http://localhost:3000/api/friends/sent-requests",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"friends",
+"sent-requests"
+]
+}
+},
+"response": []
+},
+{
+"name": "cancelSendedRequest",
+"request": {
+"method": "DELETE",
+"header": [],
+"body": {
+"mode": "raw",
+"raw": "",
+"options": {
+"raw": {
+"language": "json"
+}
+}
+},
+"url": {
+"raw": "http://localhost:3000/api/friends/cancel-request/b2198cd1-
+526e-4d12-8195-a9690857d547",
+"protocol": "http",
+"host": [
+"localhost"
+],
+"port": "3000",
+"path": [
+"api",
+"friends",
+"cancel-request",
+"b2198cd1-526e-4d12-8195-a9690857d547"
+]
+}
+},
+"response": []
+}
+]
+}
+],
+"auth": {
+"type": "bearer",
+"bearer": [
+{
+"key": "token",
+"value":
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU3YzZjMTE3LTRjZGUt
+NDI2Mi04NmNlLTA5ZDk4MTBmZGFlZSIsImVtYWlsIjoiYWRtaW5AZ21haW
+wuY29tIiwiaWF0IjoxNzM2MjE5MDMxLCJleHAiOjE3MzYyNTUwMzF9.eVvX
+ZCg82iNwzsiOP6Hpf1NH8WcN_34uwvE5ZMfU60Y",
+"type": "string"
+}
+]
+},
+"event": [
+{
+"listen": "prerequest",
+"script": {
+"type": "text/javascript",
+"exec": [
+""
+]
+}
+},
+{
+"listen": "test",
+"script": {
+"type": "text/javascript",
+"exec": [
+""
+]
+}
+}
+],
+"variable": [
+{
+"key": "baseUrl",
+"value": "https://farming-simulator.pstmn.io"
+}
+]
+}
+ДОДАТОК Д
+Приклади коду серверної частини
+Лістинг 1 – Код для ініціалізації API
+const authRoute = require('./AuthRoute.js');
+const taskRoute = require('./taskRoute.js');
+const timeEntryRoute = require('./TimeEntryRoute.js');
+const reportRoute = require('./reportRoute.js');
+const friendshipRoute = require('./frienshipRoute.js');
+module.exports = (app) => {
+// Підключення роутів до основного додатка
+app.use('/api/auth', authRoute); // Роут для авторизації
+app.use('/api/tasks', taskRoute);
+app.use('/api/time-entries', timeEntryRoute);
+app.use('/api/reports', reportRoute);
+app.use('/api/', friendshipRoute);
+};
+Лістінг 2 – Код для автентифікації з хешуванням та записом даних до БД
+const express = require('express');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { body, validationResult } = require('express-validator');
+const User = require('../../models/user');
+const router = express.Router();
+const JWT_SECRET = process.env.JWT_SECRET;
+router.post(
+'/register',
+[
+body('name').isLength({ min: 3 }).withMessage('Name must be at least 3
+characters long'),
+body('email').isEmail().withMessage('Please enter a valid email'),
+body('password')
+.isLength({ min: 6 })
+.withMessage('Password must be at least 6 characters long')
+.custom((value, { req }) => {
+if (value !== req.body.passwordConfirmation) {
+throw new Error('Passwords must match');
+}
+return true;
+}),
+],
+async (req, res) => {
+const errors = validationResult(req);
+if (!errors.isEmpty()) {
+console.log(errors)
+return res.status(400).json({ errors: errors.array() });
+}
+const { name, email, password } = req.body;
+try {
+const existingUser = await User.findOne({ where: { email } });
+if (existingUser) {
+return res.status(400).json({ error: 'User already exists' });
+}
+const salt = await bcrypt.genSalt(10);
+const hashedPassword = await bcrypt.hash(password, salt);
+const newUser = await User.create({
+name,
+email,
+password: hashedPassword,
+role: 'User',
+});
+const token = jwt.sign(
+{ id: newUser.id, email: newUser.email },
+JWT_SECRET,
+{ expiresIn: '1h' }
+);
+res.status(201).json({
+message: 'User registered successfully',
+token,
+});
+} catch (error) {
+console.error(error);
+res.status(500).json({ error: 'Server error' });
+}
+}
+);
+router.post(
+'/login',
+[
+body('email').isEmail().withMessage('Please enter a valid email'),
+body('password')
+.isLength({ min: 6 })
+.withMessage('Password must be at least 6 characters long'),
+],
+async (req, res) => {
+const errors = validationResult(req);
+if (!errors.isEmpty()) {
+return res.status(400).json({ errors: errors.array() });
+}
+const { email, password } = req.body;
+try {
+const user = await User.findOne({ where: { email } });
+if (!user) {
+return res.status(400).json({ error: 'Invalid credentials' });
+}
+const isMatch = await bcrypt.compare(password, user.password);
+if (!isMatch) {
+return res.status(400).json({ error: 'Invalid credentials' });
+}
+const token = jwt.sign(
+{ id: user.id, email: user.email },
+JWT_SECRET,
+{ expiresIn: '10h' }
+);
+res.status(200).json({
+message: 'Login successful',
+token,
+});
+} catch (error) {
+console.error(error);
+res.status(500).json({ error: 'Server error' });
+}
+}
+);
+router.get('/me', async (req, res) => {
+try {
+const authHeader = req.headers.authorization;
+if (!authHeader) {
+return res.status(401).json({ error: 'Authorization header missing' });
+}
+const token = authHeader.split(' ')[1];
+let decoded;
+try {
+decoded = jwt.verify(token, JWT_SECRET);
+} catch (error) {
+if (error.name === 'TokenExpiredError') {
+return res.status(401).json({ error: 'Token expired. Please log in again.' });
+} else {
+throw error;
+}
+}
+const user = await User.findByPk(decoded.id, {
+attributes: ['id', 'name', 'email', 'role', 'created_at'],
+});
+if (!user) {
+return res.status(404).json({ error: 'User not found' });
+}
+res.status(200).json(user);
+} catch (error) {
+console.error('Error fetching user data:', error);
+res.status(500).json({ error: 'Server error' });
+}
+});
+module.exports = router;
+Лістинг 3 - Код для обробки запитів на дружбу
+const express = require('express');
+const authMiddleware = require('../../middlewares/authMiddleware'); // Мідлвар
+авторизації
+const User = require('../../models/user');
+const Friendship = require('../../models/friendship.js');
+const { Op } = require('sequelize');
+const router = express.Router();
+// Відправка запиту на дружбу
+router.post('/friends/request', authMiddleware, async (req, res) => {
+const { email } = req.body;
+const sender_id = req.user.id;
+try {
+// Знаходимо отримувача
+const receiver = await User.findOne({ where: { email } });
+if (!receiver) {
+return res.status(404).json({ error: 'User not found' });
+}
+// Не можна відправити запит самому собі
+if (receiver.id === sender_id) {
+return res.status(400).json({ error: 'Cannot send friend request to yourself' });
+}
+// Шукаємо існуючий запис - запит або дружбу - в будь-якому напрямку
+const existingRequest = await Friendship.findOne({
+where: {
+[Op.or]: [
+{ sender_id, receiver_id: receiver.id },
+{ sender_id: receiver.id, receiver_id: sender_id },
+],
+// Якщо потрібно блокувати, коли статус — будь-який з
+["pending","accepted"]
+status: ['pending', 'accepted', 'rejected']
+},
+});
+if (existingRequest) {
+if(existingRequest.status !== 'rejected'){
+return res.status(400).json({
+error: 'Request already exists or you are already friends',
+});
+}
+return res.status(400).json({
+error: 'Request was rejected',
+});
+}
+// Якщо нічого не знайдено — можна відправити запит
+await Friendship.create({
+sender_id,
+receiver_id: receiver.id,
+status: 'pending',
+});
+res.status(201).json({ message: 'Friend request sent successfully' });
+} catch (error) {
+console.error('Помилка під час відправлення запиту на дружбу:', error);
+res.status(500).json({ error: 'Server error' });
+}
+});
+// Отримання запитів на дружбу
+router.get('/friends/requests', authMiddleware, async (req, res) => {
+const receiver_id = req.user.id;
+try {
+// Шукаємо всі "pending" запити, де поточний користувач — отримувач
+const requests = await Friendship.findAll({
+where: { receiver_id, status: 'pending' },
+include: [
+{
+model: User,
+as: 'Sender',
+attributes: ['id', 'name', 'email'],
+},
+],
+});
+res.status(200).json(requests);
+} catch (error) {
+console.error('Помилка під час отримання запитів на дружбу:', error);
+res.status(500).json({ error: 'Server error' });
+}
+});
+// Відповідь на запит дружби
+router.post('/friends/respond', authMiddleware, async (req, res) => {
+const { request_id, action } = req.body; // `action`: accept або reject
+const receiver_id = req.user.id;
+try {
+const friendship = await Friendship.findOne({
+where: { id: request_id, receiver_id, status: 'pending' },
+});
+if (!friendship) {
+return res.status(404).json({ error: 'Request not found' });
+}
+if (action === 'accept') {
+// Оновлення статусу на accepted
+friendship.status = 'accepted';
+await friendship.save();
+return res.status(200).json({ message: 'Friend request accepted' });
+} else if (action === 'reject') {
+// Відхиляємо
+friendship.status = 'rejected';
+await friendship.save();
+return res.status(200).json({ message: 'Friend request rejected' });
+} else {
+return res.status(400).json({ error: 'Invalid action' });
+}
+} catch (error) {
+console.error(error);
+res.status(500).json({ error: 'Server error' });
+}
+});
+// Отримання списку друзів
+router.get('/friends', authMiddleware, async (req, res) => {
+const user_id = req.user.id;
+try {
+// Шукаємо всі accepted дружби, де користувач є sender або receiver
+const friendshipRecords = await Friendship.findAll({
+where: {
+status: 'accepted',
+[Op.or]: [
+{ sender_id: user_id },
+{ receiver_id: user_id },
+],
+},
+include: [
+{ model: User, as: 'Sender', attributes: ['id', 'name', 'email'] },
+{ model: User, as: 'Receiver', attributes: ['id', 'name', 'email'] },
+],
+});
+// Перетворюємо записи у список друзів
+const friendsList = friendshipRecords.map((record) => {
+if (record.sender_id === user_id) {
+return record.Receiver; // Друг — це Receiver
+} else {
+return record.Sender; // Друг — це Sender
+}
+});
+res.status(200).json(friendsList);
+} catch (error) {
+console.error('Помилка під час отримання списку друзів:', error);
+res.status(500).json({ error: 'Server error' });
+}
+});
+// Видалення друга
+router.delete('/friends/remove', authMiddleware, async (req, res) => {
+const { friend_id } = req.body; // ID друга, якого видаляємо
+const user_id = req.user.id;
+try {
+// Знаходимо запис дружби
+const friendship = await Friendship.findOne({
+where: { sender_id: user_id, receiver_id: friend_id, status: 'accepted' },
+});
+if (!friendship) {
+return res.status(404).json({ error: 'Friendship not found' });
+}
+// Видаляємо обидва зв’язки
+await Friendship.destroy({
+where: { sender_id: user_id, receiver_id: friend_id, status: 'accepted' },
+});
+await Friendship.destroy({
+where: { sender_id: friend_id, receiver_id: user_id, status: 'accepted' },
+});
+res.status(200).json({ message: 'Friend removed successfully' });
+} catch (error) {
+console.error('Помилка під час видалення друга:', error);
+res.status(500).json({ error: 'Server error' });
+}
+});
+// Отримання списку надісланих запитів на дружбу
+router.get('/friends/sent-requests', authMiddleware, async (req, res) => {
+const sender_id = req.user.id;
+try {
+const sentRequests = await Friendship.findAll({
+where: { sender_id, status: { [Op.in]: ['pending', 'rejected'] } },
+include: [
+{
+model: User,
+as: 'Receiver',
+attributes: ['id', 'name', 'email'],
+},
+],
+});
+res.status(200).json(sentRequests);
+} catch (error) {
+console.error('Помилка під час отримання списку надісланих запитів на
+дружбу:', error);
+res.status(500).json({ error: 'Server error' });
+}
+});
+// Скасування надісланого запиту на дружбу
+router.delete('/friends/cancel-request/:id', authMiddleware, async (req, res) => {
+const request_id = req.params.id;
+const sender_id = req.user.id;
+try {
+const friendship = await Friendship.findOne({
+where: { id: request_id, sender_id, status: 'pending' },
+});
+if (!friendship) {
+return res.status(404).json({ error: 'Friend request not found or already
+responded to' });
+}
+friendship.status = 'rejected';
+await friendship.save();
+res.status(200).json({ message: 'Friend request canceled successfully' });
+} catch (error) {
+console.error('Помилка під час скасування запиту на дружбу:', error);
+res.status(500).json({ error: 'Server error' });
+}
+});
+module.exports = router;
+ДОДАТОК Е
+Посилання на GitHub репозиторій:
+https://github.com/NureDiachenkoMykyta/arkpz-pzpi-22-2-diachenkomykyta/tree/main/Task2
+ДОДАТОК Ж
 Посилання на YouTube відео:
 https://youtu.be/5bvszw6QczM

@@ -1,0 +1,10 @@
+.time-entry-list {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.time-entry-item {
+  background-color: #e9ecef;
+  border-radius: 5px;
+}

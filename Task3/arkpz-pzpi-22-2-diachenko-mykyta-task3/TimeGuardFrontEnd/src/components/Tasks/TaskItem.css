@@ -1,0 +1,12 @@
+.task-item {
+  background-color: #f9f9f9;
+  border-radius: 5px;
+}
+
+.action-buttons button {
+  margin-right: 10px;
+}
+
+.timer-controls button {
+  margin-right: 10px;
+}
