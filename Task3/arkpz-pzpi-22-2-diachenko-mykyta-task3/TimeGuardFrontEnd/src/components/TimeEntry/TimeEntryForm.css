@@ -1,0 +1,17 @@
+.time-entry-form {
+  background-color: #f1f1f1;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.time-entry-form label {
+  font-weight: bold;
+}
+
+.time-entry-form .form-control.is-invalid {
+  border-color: #dc3545;
+}
+
+.time-entry-form .invalid-feedback {
+  color: #dc3545;
+}
